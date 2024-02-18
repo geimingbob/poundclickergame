@@ -1,19 +1,32 @@
+function playClickSound() {
+  const clickSound = document.getElementById('clickSound');
+  clickSound.play();
+}
 let score = parseInt(localStorage.getItem("score")) || 0;
 let rank = localStorage.getItem("rank") || "Beginner";
 let currentUser = localStorage.getItem("currentUser") || null;
 let userAccounts = JSON.parse(localStorage.getItem("userAccounts")) || [];
+let clicks = 0; // Counter for clicks
+let cps = 0; // Clicks per second
 
 function handleClick() {
   if (currentUser !== null) {
     score++;
+    playClickSound(); // Play the click sound
     updateScore();
     checkRank();
     updateRank();
     saveUserData();
-    updateLeaderboard();
   } else {
     alert("Please log in first!");
   }
+}
+
+// Function to update CPS every second
+function updateCPS() {
+  cps = clicks; // Store the clicks in the past second
+  clicks = 0; // Reset the click counter
+  document.getElementById('cps').textContent = 'CPS: ' + cps;
 }
 
 function updateScore() {
@@ -21,8 +34,8 @@ function updateScore() {
 }
 
 function checkRank() {
-  const rankThresholds = [10, 50, 100, 200];
-  const rankNames = ["Beginner", "Intermediate", "Advanced", "Master"];
+  const rankThresholds = [0, 100, 250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 3000, 4000, 5000, 5250, 7500];
+  const rankNames = ["Bad", "Meh", "Alright", "Good!", "Your getting somewhere!", "Awesome :)", "Geez", "Uhmm", "what", "what the fuck", "You can stop now", "Alright that's it im leaving", "Damn you really don't wanna stop huh?", "STOP!", "lalalalalalalalalalaalalalalalalaalalalalalala", "i gotta go to the toilet", "ok im back"];
 
   for (let i = rankThresholds.length - 1; i >= 0; i--) {
     if (score >= rankThresholds[i]) {
@@ -95,7 +108,6 @@ function loadUserData() {
   updateScore();
   checkRank();
   updateRank();
-  updateLeaderboard();
 }
 
 function isUsernameUnique(username) {
@@ -106,34 +118,7 @@ function saveUserAccounts() {
   localStorage.setItem("userAccounts", JSON.stringify(userAccounts));
 }
 
-function updateLeaderboard() {
-  const leaderboardDiv = document.getElementById('leaderboard');
-  leaderboardDiv.innerHTML = "<h3>Leaderboard</h3>";
-
-  // Log userAccounts for debugging
-  console.log("userAccounts:", userAccounts);
-
-  userAccounts.sort((a, b) => b.score - a.score);
-
-  userAccounts.forEach(user => {
-    const userEntry = document.createElement('p');
-    userEntry.textContent = user.username + ": " + user.score;
-    leaderboardDiv.appendChild(userEntry);
-  });
-}
-
-window.addEventListener('load', function () {
-  if (currentUser !== null) {
-    alert("Welcome back, " + currentUser + "!");
-    loadUserData();
-  }
-});
-
-// Add an event listener for the refresh leaderboard button
-document.getElementById('refreshLeaderboardButton').addEventListener('click', function () {
-  updateLeaderboard();
-});
-
+// Event listeners
 document.getElementById('clickButton').addEventListener('click', handleClick);
 document.getElementById('loginButton').addEventListener('click', handleLogin);
 document.getElementById('logoutButton').addEventListener('click', handleLogout);
