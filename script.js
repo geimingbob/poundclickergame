@@ -108,6 +108,8 @@ function authenticateAndLogin(username, password) {
   loadUserData();
 }
 
+// ... (your existing code)
+
 function loadUserData() {
   score = parseInt(localStorage.getItem("score")) || 0;
   updateScore();
@@ -116,32 +118,11 @@ function loadUserData() {
   updateLeaderboard();
 }
 
-function isUsernameUnique(username) {
-  return !userAccounts.some(user => user.username === username);
-}
-
-function saveUserAccounts() {
-  localStorage.setItem("userAccounts", JSON.stringify(userAccounts));
-}
-
-function updateLeaderboard() {
-  const leaderboardDiv = document.getElementById('leaderboard');
-  leaderboardDiv.innerHTML = "<h3>Leaderboard</h3>";
-
-  userAccounts.sort((a, b) => b.score - a.score); // Sort users by score
-
-  userAccounts.forEach(user => {
-    const userEntry = document.createElement('p');
-    userEntry.textContent = user.username + ": " + user.score;
-    leaderboardDiv.appendChild(userEntry);
-  });
-}
-
 // Check if there is a logged-in user on page load
 window.addEventListener('load', function() {
   if (currentUser !== null) {
     alert("Welcome back, " + currentUser + "!");
-    loadUserData();
+    loadUserData(); // Make sure to load user data on page load
   }
 });
 
@@ -149,3 +130,8 @@ document.getElementById('clickButton').addEventListener('click', handleClick);
 document.getElementById('loginButton').addEventListener('click', handleLogin);
 document.getElementById('logoutButton').addEventListener('click', handleLogout);
 document.getElementById('signUpButton').addEventListener('click', handleSignUp);
+
+// Add this event listener for loading user data if someone accesses the leaderboard directly
+document.getElementById('leaderboard').addEventListener('click', function() {
+  loadUserData();
+});
