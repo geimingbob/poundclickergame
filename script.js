@@ -1,25 +1,7 @@
 let score = parseInt(localStorage.getItem("score")) || 0;
 let rank = localStorage.getItem("rank") || "Beginner";
 let currentUser = localStorage.getItem("currentUser") || null;
-
-// Load user accounts from local storage or initialize an empty array
 let userAccounts = JSON.parse(localStorage.getItem("userAccounts")) || [];
-
-// Function to authenticate user
-function authenticateUser(username, password) {
-  const existingUser = userAccounts.find(user => user.username === username);
-
-  if (existingUser) {
-    // Compare the entered password with the stored password
-    if (existingUser.password === password) {
-      return true; // Authentication successful
-    } else {
-      return false; // Incorrect password
-    }
-  } else {
-    return false; // User not found
-  }
-}
 
 function handleClick() {
   if (currentUser !== null) {
@@ -89,7 +71,7 @@ function handleSignUp() {
 
   if (username !== null && username !== "" && password !== null && password !== "") {
     if (isUsernameUnique(username)) {
-      userAccounts.push({ username, password, score: 0 }); // Initialize score to 0
+      userAccounts.push({ username, password, score: 0 });
       saveUserAccounts();
       alert("Account created successfully! Welcome, " + username + "!");
       authenticateAndLogin(username, password);
@@ -128,7 +110,10 @@ function updateLeaderboard() {
   const leaderboardDiv = document.getElementById('leaderboard');
   leaderboardDiv.innerHTML = "<h3>Leaderboard</h3>";
 
-  userAccounts.sort((a, b) => b.score - a.score); // Sort users by score
+  // Log userAccounts for debugging
+  console.log("userAccounts:", userAccounts);
+
+  userAccounts.sort((a, b) => b.score - a.score);
 
   userAccounts.forEach(user => {
     const userEntry = document.createElement('p');
@@ -137,23 +122,19 @@ function updateLeaderboard() {
   });
 }
 
-// Check if there is a logged-in user on page load
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
   if (currentUser !== null) {
     alert("Welcome back, " + currentUser + "!");
     loadUserData();
   }
 });
 
+// Add an event listener for the refresh leaderboard button
+document.getElementById('refreshLeaderboardButton').addEventListener('click', function () {
+  updateLeaderboard();
+});
+
 document.getElementById('clickButton').addEventListener('click', handleClick);
 document.getElementById('loginButton').addEventListener('click', handleLogin);
 document.getElementById('logoutButton').addEventListener('click', handleLogout);
 document.getElementById('signUpButton').addEventListener('click', handleSignUp);
-// ... (your existing code)
-
-// Add an event listener for the refresh leaderboard button
-document.getElementById('refreshLeaderboardButton').addEventListener('click', function() {
-  updateLeaderboard();
-});
-
-// ... (your existing code)
