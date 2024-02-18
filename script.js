@@ -2,24 +2,19 @@ function playClickSound() {
   const clickSound = document.getElementById('clickSound');
   clickSound.play();
 }
+
 let score = parseInt(localStorage.getItem("score")) || 0;
 let rank = localStorage.getItem("rank") || "Beginner";
-let currentUser = localStorage.getItem("currentUser") || null;
-let userAccounts = JSON.parse(localStorage.getItem("userAccounts")) || [];
 let clicks = 0; // Counter for clicks
 let cps = 0; // Clicks per second
 
 function handleClick() {
-  if (currentUser !== null) {
-    score++;
-    playClickSound(); // Play the click sound
-    updateScore();
-    checkRank();
-    updateRank();
-    saveUserData();
-  } else {
-    alert("Please log in first!");
-  }
+  score++;
+  playClickSound(); // Play the click sound
+  updateScore();
+  checkRank();
+  updateRank();
+  saveUserData();
 }
 
 // Function to update CPS every second
@@ -54,72 +49,5 @@ function saveUserData() {
   localStorage.setItem("rank", rank);
 }
 
-function handleLogin() {
-  const username = prompt("Enter your username:");
-  const password = prompt("Enter your password:");
-
-  if (username !== null && username !== "" && password !== null && password !== "") {
-    if (authenticateUser(username, password)) {
-      currentUser = username;
-      localStorage.setItem("currentUser", currentUser);
-      alert("Login successful! Welcome, " + currentUser + "!");
-      loadUserData();
-    } else {
-      alert("Incorrect username or password. Please try again.");
-    }
-  } else {
-    alert("Login canceled. Please enter a valid username and password.");
-  }
-}
-
-function handleLogout() {
-  currentUser = null;
-  localStorage.removeItem("currentUser");
-  alert("Logout successful!");
-}
-
-function handleSignUp() {
-  const username = prompt("Enter a new username:");
-  const password = prompt("Enter a password for your new account:");
-
-  if (username !== null && username !== "" && password !== null && password !== "") {
-    if (isUsernameUnique(username)) {
-      userAccounts.push({ username, password, score: 0 });
-      saveUserAccounts();
-      alert("Account created successfully! Welcome, " + username + "!");
-      authenticateAndLogin(username, password);
-    } else {
-      alert("Username already exists. Please choose a different username.");
-    }
-  } else {
-    alert("Account creation canceled. Please enter a valid username and password.");
-  }
-}
-
-function authenticateAndLogin(username, password) {
-  currentUser = username;
-  localStorage.setItem("currentUser", currentUser);
-  
-  loadUserData();
-}
-
-function loadUserData() {
-  score = parseInt(localStorage.getItem("score")) || 0;
-  updateScore();
-  checkRank();
-  updateRank();
-}
-
-function isUsernameUnique(username) {
-  return !userAccounts.some(user => user.username === username);
-}
-
-function saveUserAccounts() {
-  localStorage.setItem("userAccounts", JSON.stringify(userAccounts));
-}
-
-// Event listeners
+// Event listener
 document.getElementById('clickButton').addEventListener('click', handleClick);
-document.getElementById('loginButton').addEventListener('click', handleLogin);
-document.getElementById('logoutButton').addEventListener('click', handleLogout);
-document.getElementById('signUpButton').addEventListener('click', handleSignUp);
